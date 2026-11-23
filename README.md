@@ -17,89 +17,111 @@ Este MVP atua como um **monitor didático por linha de comando (CLI)**: o aluno 
 
 ```text
 Usuário (CLI) ──▶ app.py ──▶ llm.py (API compatível com OpenAI) ──▶ Resposta JSON parseada + Telemetria de Tokens + Aviso Ético
-Estrutura de Arquivos
-app.py: interface de entrada via terminal (sys.argv ou input()), exibição do JSON formatado, leitura rápida, contagem de tokens e aviso ético.
+```
 
-llm.py: integração com a API de LLM (compatível com o SDK da OpenAI), suporte ao modo simulado (LLM_MOCK=1), parse de JSON (json.loads) e extração de métricas de tokens (prompt_tokens, completion_tokens, total_tokens).
+### Estrutura de Arquivos
 
-prompts.py: definição do SYSTEM_PROMPT separado da entrada do usuário, estabelecendo papel, regras pedagógicas, guarda de escopo e esquema JSON obrigatório.
+| Arquivo | Descrição |
+|---|---|
+| `app.py` | Interface de entrada via terminal (`sys.argv` ou `input()`), exibição do JSON formatado, leitura rápida, contagem de tokens e aviso ético. |
+| `llm.py` | Integração com a API de LLM (compatível com o SDK da OpenAI), suporte ao modo simulado (`LLM_MOCK=1`), parse de JSON (`json.loads`) e extração de métricas de tokens (`prompt_tokens`, `completion_tokens`, `total_tokens`). |
+| `prompts.py` | Definição do `SYSTEM_PROMPT` separado da entrada do usuário, estabelecendo papel, regras pedagógicas, guarda de escopo e esquema JSON obrigatório. |
+| `.env.example` | Modelo de variáveis de ambiente sem credenciais reais. |
+| `.gitignore` | Garante que `venv/`, `__pycache__/`, `*.pyc` e o arquivo `.env` com a chave real não sejam versionados. |
+| `requirements.txt` | Dependências do projeto (`openai`, `python-dotenv` e demais pacotes necessários para o CLI). |
 
-.env.example: modelo de variáveis de ambiente sem credenciais reais.
+## 3. Como Rodar o Projeto
 
-.gitignore: garante que venv/, __pycache__/, *.pyc e o arquivo .env com a chave real não sejam versionados.
+### Pré-requisitos
 
-requirements.txt: dependências do projeto (openai, python-dotenv e demais pacotes necessários para o CLI).
+- Python 3.10 ou superior instalado;
+- Uma chave de API gratuita (ex.: Google AI Studio / Gemini Free Tier ou provedor compatível com OpenAI) para execução no modo real.
 
-3. Como Rodar o Projeto
-Pré-requisitos
-Python 3.10 ou superior instalado;
+### Passo a passo
 
-Uma chave de API gratuita (ex.: Google AI Studio / Gemini Free Tier ou provedor compatível com OpenAI) para execução no modo real.
+**1. Clone o repositório e acesse a pasta do projeto:**
 
-Passo a passo
-Clone o repositório e acesse a pasta do projeto:
-
-Bash
+```bash
 git clone <URL_DO_REPOSITORIO>
 cd <PASTA_DO_PROJETO>
-Crie e ative um ambiente virtual:
+```
+
+**2. Crie e ative um ambiente virtual:**
 
 Git Bash (Windows):
 
-Bash
+```bash
 python -m venv venv
 source venv/Scripts/activate
+```
+
 PowerShell / CMD (Windows):
 
-Bash
+```bat
 python -m venv venv
 venv\Scripts\activate
-Linux / macOS:   
+```
 
-Bash
+Linux / macOS:
+
+```bash
 python3 -m venv venv
 source venv/bin/activate
-Instale as dependências:   
+```
 
-Bash
+**3. Instale as dependências:**
+
+```bash
 pip install -r requirements.txt
-Configure as variáveis de ambiente:   
+```
+
+**4. Configure as variáveis de ambiente:**
 
 Git Bash / Linux / macOS:
 
-Bash
+```bash
 cp .env.example .env
+```
+
 PowerShell / CMD:
 
-Bash
+```bat
 copy .env.example .env
-Edite o arquivo .env:
+```
 
-Para teste local rápido sem gastar tokens ou sem internet, mantenha LLM_MOCK=1.
+**5. Edite o arquivo `.env`:**
 
-Para execução real com a API, altere para LLM_MOCK=0 e preencha sua chave em LLM_API_KEY:
+- Para teste local rápido, sem gastar tokens ou sem internet, mantenha `LLM_MOCK=1`.
+- Para execução real com a API, altere para `LLM_MOCK=0` e preencha sua chave em `LLM_API_KEY`:
 
-Snippet de código
+```env
 LLM_MOCK=0
 LLM_API_KEY=sua_chave_real_aqui
-LLM_BASE_URL=[https://generativelanguage.googleapis.com/v1beta/openai/](https://generativelanguage.googleapis.com/v1beta/openai/)
+LLM_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/
 LLM_MODEL=gemini-3.5-flash-lite
-Execute a aplicação:
+```
+
+**6. Execute a aplicação:**
 
 Passando a dúvida ou erro diretamente como argumento:
 
-Bash
+```bash
 python app.py "Qual a diferença entre chave primária e chave estrangeira em SQL?"
+```
+
 Ou em modo interativo:
 
-Bash
+```bash
 python app.py
-4. Exemplo de Saída e Demonstração (Prints / GIF)
-[INSIRA AQUI UM PRINT OU GIF DO TERMINAL EXECUTANDO O app.py EM MODO REAL (LLM_MOCK=0)]
+```
+
+## 4. Exemplo de Saída e Demonstração (Prints / GIF)
+
+> **[INSIRA AQUI UM PRINT OU GIF DO TERMINAL EXECUTANDO O `app.py` EM MODO REAL (`LLM_MOCK=0`)]**
 
 Exemplo de saída gerada no terminal:
 
-Plaintext
+```text
 === RESPOSTA ESTRUTURADA (JSON) ===
 {
   "conceito_ou_erro": "Chave Primária (PRIMARY KEY) vs. Chave Estrangeira (FOREIGN KEY) em SQL",
@@ -117,42 +139,36 @@ Próximo passo: Teste criar duas tabelas relacionadas...
 Tokens -> entrada: 185 | saída: 142 | total: 327
 
 Aviso: Esta ferramenta utiliza IA para apoio didático em ADS e não substitui a orientação de um professor, monitor ou a documentação oficial.
-5. Engenharia de Prompt e Controle de Tokens/Custo
-Separação de papéis (system vs. user): O contrato de comportamento, o foco em TI/ADS e o esquema JSON ficam isolados em prompts.py (SYSTEM_PROMPT), enquanto a dúvida ou erro do estudante é enviada exclusivamente no papel user.
+```
 
-Baixa temperatura (temperature=0.3): Configurada para priorizar consistência estrutural na geração do JSON e precisão técnica nas explicações.
+## 5. Engenharia de Prompt e Controle de Tokens/Custo
 
-Limite de saída (max_tokens=400): Evita respostas prolixas, reduz latência e controla o consumo de tokens de saída.
+- **Separação de papéis (system vs. user):** o contrato de comportamento, o foco em TI/ADS e o esquema JSON ficam isolados em `prompts.py` (`SYSTEM_PROMPT`), enquanto a dúvida ou erro do estudante é enviada exclusivamente no papel `user`.
+- **Baixa temperatura (`temperature=0.3`):** configurada para priorizar consistência estrutural na geração do JSON e precisão técnica nas explicações.
+- **Limite de saída (`max_tokens=400`):** evita respostas prolixas, reduz latência e controla o consumo de tokens de saída.
+- **Contingência com `LLM_MOCK`:** permite validar o fluxo do CLI mesmo sem chave de API, sem cota disponível ou sem conexão durante testes e apresentações.
+- **Telemetria em tempo real:** a cada chamada real, o sistema exibe no terminal os tokens de entrada, saída e total retornados pela API.
 
-Contingência com LLM_MOCK: Permite validar o fluxo do CLI mesmo sem chave de API, sem cota disponível ou sem conexão durante testes e apresentações.
+## 6. Ética, Privacidade e Limitações
 
-Telemetria em tempo real: A cada chamada real, o sistema exibe no terminal os tokens de entrada, saída e total retornados pela API.
+- **Transparência e Apoio Educacional:** o sistema exibe explicitamente ao final de toda execução:
 
-6. Ética, Privacidade e Limitações
-Transparência e Apoio Educacional: O sistema exibe explicitamente ao final de toda execução:
+  > "Aviso: Esta ferramenta utiliza IA para apoio didático em ADS e não substitui a orientação de um professor, monitor ou a documentação oficial."
 
-"Aviso: Esta ferramenta utiliza IA para apoio didático em ADS e não substitui a orientação de um professor, monitor ou a documentação oficial."
+- **Integridade Acadêmica:** o `SYSTEM_PROMPT` orienta o modelo a explicar o conceito e indicar o próximo passo de investigação, evitando entregar respostas prontas de atividades ou provas.
+- **Risco de Alucinação:** modelos de linguagem podem interpretar incorretamente mensagens de erro muito específicas ou mudanças recentes de versões. Por isso, o estudante deve sempre conferir o resultado na documentação oficial e com o professor.
+- **Dados Pessoais (LGPD) e Segurança:** nenhuma entrada é armazenada em banco de dados pela aplicação. Recomenda-se que o usuário não cole senhas, tokens, credenciais ou dados pessoais reais nas consultas. A `LLM_API_KEY` fica apenas no `.env` local, ignorado pelo Git.
 
-Integridade Acadêmica: O SYSTEM_PROMPT orienta o modelo a explicar o conceito e indicar o próximo passo de investigação, evitando entregar respostas prontas de atividades ou provas.
+## 7. Declaração de Uso de IA
 
-Risco de Alucinação: Modelos de linguagem podem interpretar incorretamente mensagens de erro muito específicas ou mudanças recentes de versões. Por isso, o estudante deve sempre conferir o resultado na documentação oficial e com o professor.
-
-Dados Pessoais (LGPD) e Segurança: Nenhuma entrada é armazenada em banco de dados pela aplicação. Recomenda-se que o usuário não cole senhas, tokens, credenciais ou dados pessoais reais nas consultas. A LLM_API_KEY fica apenas no .env local, ignorado pelo Git.
-
-7. Declaração de Uso de IA
 Em conformidade com as diretrizes da disciplina:
 
-Ferramentas de Inteligência Artificial generativa foram utilizadas como apoio durante o desenvolvimento deste projeto para estruturação inicial do código, revisão de documentação (README.md) e refinamento do SYSTEM_PROMPT.
+- Ferramentas de Inteligência Artificial generativa foram utilizadas como apoio durante o desenvolvimento deste projeto para estruturação inicial do código, revisão de documentação (`README.md`) e refinamento do `SYSTEM_PROMPT`.
+- Todo o código foi revisado, testado e compreendido integralmente pelos integrantes da dupla, que estão aptos a explicar qualquer trecho durante a avaliação e o pitch.
 
-Todo o código foi revisado, testado e compreendido integralmente pelos integrantes da dupla, que estão aptos a explicar qualquer trecho durante a avaliação e o pitch.
+## 8. Equipe e Contribuições
 
-8. Equipe e Contribuições
-Alan Gabriel — Integração com a API (llm.py), configuração de ambiente/telemetria de tokens e testes de execução no CLI.
-
-Maykoo Douglas — Interface CLI (app.py), engenharia do SYSTEM_PROMPT (prompts.py), diretrizes éticas/LGPD e documentação.
-
-
-<ElicitationsGroup message="Como deseja fechar essa etapa?">
-  <Elicitation label="Conferir checklist final de entrega" query="Faça um checklist final do que conferir nos arquivos da pasta mentor-ads antes de enviar para a professora."/>
-  <Elicitation label="Simular perguntas da Profª Tarciana" query="Simule perguntas difíceis que a Profª Tarciana pode fazer sobre o código, prompt e ética do Mentor ADS."/>
-</ElicitationsGroup>
+| Integrante | Contribuições |
+|---|---|
+| **Alan Gabriel** | Integração com a API (`llm.py`), configuração de ambiente/telemetria de tokens e testes de execução no CLI. |
+| **Maykoo Douglas** | Interface CLI (`app.py`), engenharia do `SYSTEM_PROMPT` (`prompts.py`), diretrizes éticas/LGPD e documentação. |

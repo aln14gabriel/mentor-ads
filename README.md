@@ -1,4 +1,4 @@
-# Monitor Didático de ADS — Projeto N2 (Startup de IA em Dupla)
+# Mentor ADS — Projeto (Startup de IA em Dupla)
 
 MVP desenvolvido em Python para a disciplina de **Inteligência Artificial — Análise e Desenvolvimento de Sistemas (ADS)**, ministrada pela **Profª Tarciana**.
 

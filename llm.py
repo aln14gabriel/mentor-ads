@@ -55,7 +55,7 @@ def chamar_llm(system_prompt: str, user_prompt: str) -> dict:
             {"role": "user", "content": user_prompt},
         ],
         temperature=0.3,
-        max_tokens=600,
+        max_tokens=1200,
     )
 
     conteudo = resp.choices[0].message.content or ""
